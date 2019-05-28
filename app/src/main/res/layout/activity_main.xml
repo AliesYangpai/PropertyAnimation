@@ -15,24 +15,24 @@
             android:id="@+id/btn1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ObjectAnimator" />
+            android:text="ObjectAnimator透明度" />
 
         <Button
             android:id="@+id/btn2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ValueAnimator" />
+            android:text="ObjectAnimator平移" />
         <Button
             android:id="@+id/btn3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AnimationSet" />
+            android:text="AnimationSet组合动画" />
 
         <Button
             android:id="@+id/btn4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PropertyValuesHolder" />
+            android:text="Evaluator估值器" />
 
 
 

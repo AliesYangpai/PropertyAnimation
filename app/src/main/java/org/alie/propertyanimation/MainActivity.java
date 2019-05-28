@@ -3,12 +3,15 @@ package org.alie.propertyanimation;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.PointF;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -51,16 +54,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn1:
-                startObjectAnimation(iv);
+                startObjectAnimationAlpha(iv);
                 break;
             case R.id.btn2:
-                startValueAnimation(iv);
+                startObjectAnimationTranslationX(iv);
                 break;
             case R.id.btn3:
-                startAnimationSet(iv);
+                startAnimatorSet(iv);
                 break;
             case R.id.btn4:
-                startPropertyValueHolderAnim(iv);
+                startEvaluator(iv);
                 break;
         }
     }
@@ -70,52 +73,60 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      *
      * @param imageView
      */
-    private void startObjectAnimation(ImageView imageView) {
+    private void startObjectAnimationAlpha(ImageView imageView) {
         ObjectAnimator alpha = ObjectAnimator.ofFloat(imageView, "alpha", 1F, 0.3F);
         alpha.setDuration(1000);
-        alpha.setStartDelay(300);
         alpha.start();
     }
 
     /**
-     * 属性动画动画监听
+     * 属性动画初级，横向平移300px
      *
      * @param imageView
      */
-    private void startValueAnimation(final ImageView imageView) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "pingyiba", 0F, 100F);
+    private void startObjectAnimationTranslationX(ImageView imageView) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "translationX", 0, 300);
         animator.setDuration(1000);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        animator.start();
+    }
+
+    /**
+     * 属性动画初级，animator组合属性动画
+     *
+     * @param imageView
+     */
+    private void startAnimatorSet(ImageView imageView) {
+        ObjectAnimator translationX = ObjectAnimator.ofFloat(imageView, "translationX", 0, 300);
+        ObjectAnimator translationY = ObjectAnimator.ofFloat(imageView, "translationY", 0, 300);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.setDuration(1000);
+        animatorSet.playTogether(translationX, translationY);
+        animatorSet.start();
+    }
+
+    private void startEvaluator(final ImageView imageView) {
+        ValueAnimator valueAnimator = ValueAnimator.ofObject(null, new PointF());
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.setEvaluator(new TypeEvaluator<PointF>() {
             @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float animatedValue = (float) valueAnimator.getAnimatedValue();
-                Log.i(TAG, "===animatedValue:" + animatedValue);
-                imageView.setScaleX(0.5f + animatedValue / 200);
-                imageView.setScaleY(0.5f + animatedValue / 200);
+            public PointF evaluate(float fraction, PointF startValue, PointF endValue) {
+                PointF pointF = new PointF();
+                pointF.x = 400 * fraction * 2;
+                pointF.y = 400 * fraction * 2 * fraction * 2;
+                return pointF;
             }
         });
-        animator.start();
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                PointF pointF = (PointF) animation.getAnimatedValue();
+                imageView.setX(pointF.x);
+                imageView.setY(pointF.y);
+            }
+        });
+        valueAnimator.setDuration(2000);
+        valueAnimator.start();
     }
 
-    private void startAnimationSet(ImageView imageView) {
-        // 平移的动画，0F,和200F 分辨代表平移起点，和终点
-        ObjectAnimator animatorTraslationX = ObjectAnimator.ofFloat(imageView, "translationX", 0F, 200F);
-        ObjectAnimator aninatorAlpha = ObjectAnimator.ofFloat(imageView, "alpha", 1F, 0.3F);
-        ObjectAnimator animatorScaleX = ObjectAnimator.ofFloat(imageView, "scaleX", 1F, 2F);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(1500);
-        animatorSet.playSequentially(animatorTraslationX,aninatorAlpha,animatorScaleX);
-        animatorSet.start();
-
-    }
-
-    public void startPropertyValueHolderAnim(ImageView imageView) {
-        PropertyValuesHolder holder1 = PropertyValuesHolder.ofFloat("alpha", 1f, 0.5f);
-        PropertyValuesHolder holder2 = PropertyValuesHolder.ofFloat("scaleX", 1f, 0.5f);
-        PropertyValuesHolder holder3 = PropertyValuesHolder.ofFloat("scaleY", 1f, 0.5f);
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(imageView, holder1, holder2, holder3);
-        animator.setDuration(200);
-        animator.start();
-
-    }
 }
