@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.PointF;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private Button btn2;
     private Button btn3;
     private Button btn4;
+    private Button btn5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         btn2 = findViewById(R.id.btn2);
         btn3 = findViewById(R.id.btn3);
         btn4 = findViewById(R.id.btn4);
+        btn5 = findViewById(R.id.btn5);
     }
 
     private void initListener() {
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
         btn4.setOnClickListener(this);
+        btn5.setOnClickListener(this);
     }
 
     private void initData() {
@@ -64,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
             case R.id.btn4:
                 startEvaluator(iv);
+                break;
+            case R.id.btn5:
+                Intent intent = new Intent(this,ShowViewActivity.class);
+                startActivity(intent);
                 break;
         }
     }
